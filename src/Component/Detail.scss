@@ -1,0 +1,53 @@
+@import './_reset.scss';
+
+// 함수
+@mixin func {
+  background-color: #eeeeee;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  width: 100%;
+  margin: auto;
+}
+
+// 변수 사용
+$메인칼라: #ff0000;
+
+.red {
+  color: $메인칼라;
+}
+
+// 기존 CSS 문법
+Container h4 {
+  color: blue;
+}
+
+Container p {
+  color: green;
+}
+
+// SASS 문법
+Container {
+  h4 {
+    color: blue;
+  }
+
+  p {
+    color: green;
+  }
+}
+
+.my-alert {
+  // 함수 사용
+  @include func;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.my-alert-red {
+  // css 가져오기
+  @extend .my-alert;
+  background-color: #ff6560;
+}
