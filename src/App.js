@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   Navbar,
   Container,
@@ -13,9 +13,15 @@ import './App.css';
 import Data from './data/data';
 import {Link, Route, Switch} from 'react-router-dom';
 import Detail from './Component/Detail';
+import axios from 'axios';
+
+// 같은 변수값을 공유할 범위생성
+export let 재고context = React.createContext();
 
 function App() {
+  // 중요 state는 상위 컴포넌트에 저장하는게 관습
   let [shoes, setShoes] = useState(Data);
+  let [재고, set재고] = useState([10, 11, 12]);
 
   return (
     <div className="App">
@@ -63,20 +69,42 @@ function App() {
             </p>
           </Jumbotron>
           <Container>
-            <Row>
-              {shoes.map((item, index) => {
-                return (
-                  <Col>
-                    <Product key={index} item={item} />
-                  </Col>
-                );
-              })}
-            </Row>
+            {/*  공유를 원하는 값. state를 props로 공유하지않고 쓸 수 있는 방법. */}
+            <재고context.Provider value={재고}>
+              <Row>
+                {shoes.map((item, index) => {
+                  return (
+                    <Col>
+                      <Product key={index} item={item} />
+                    </Col>
+                  );
+                })}
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    // ajax 사용
+                    axios
+                      .get('https://codingapple1.github.io/shop/data2.json')
+                      // 해당 브라우저의 데이터를 가져옴. 실제로 링크를 브라우저에서 확인하면 데이터가 보임
+                      .then((result) => {
+                        setShoes(shoes.concat(result.data));
+                      }) // ajax가 성공했을 때 실행
+                      .catch(() => {
+                        console.log('fail!');
+                      }); // ajax가 실패했을 때 실행
+                  }}
+                >
+                  더보기
+                </button>
+              </Row>
+            </재고context.Provider>
           </Container>
         </Route>
 
         <Route path="/detail/:id">
-          <Detail shoes={shoes} />
+          <재고context.Provider value={재고}>
+            <Detail shoes={shoes} 재고={재고} set재고={set재고} />
+          </재고context.Provider>
         </Route>
 
         <Route path="/:id">
@@ -90,6 +118,8 @@ function App() {
 }
 
 function Product(props) {
+  let 재고 = useContext(재고context);
+
   let item = props.item;
   let i = item.id;
 
@@ -104,6 +134,7 @@ function Product(props) {
       <p>
         {item.content} / {item.price}KRW
       </p>
+      {재고[i]}
     </div>
   );
 }
