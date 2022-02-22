@@ -11,8 +11,9 @@ import {
 } from 'react-bootstrap';
 import './App.css';
 import Data from './data/data';
-import {Link, Route, Switch} from 'react-router-dom';
+import {Link, Route, Switch, useHistory} from 'react-router-dom';
 import Detail from './Component/Detail';
+import Cart from './Component/Cart';
 import axios from 'axios';
 
 // 같은 변수값을 공유할 범위생성
@@ -74,7 +75,7 @@ function App() {
               <Row>
                 {shoes.map((item, index) => {
                   return (
-                    <Col>
+                    <Col key={index}>
                       <Product key={index} item={item} />
                     </Col>
                   );
@@ -107,6 +108,10 @@ function App() {
           </재고context.Provider>
         </Route>
 
+        <Route path="/cart">
+          <Cart></Cart>
+        </Route>
+
         <Route path="/:id">
           {/* 슬래시(/)뒤에 아무 문자열(parameter)이나 적었을 때 나옴 */}
           <div>anything</div>
@@ -118,13 +123,18 @@ function App() {
 }
 
 function Product(props) {
+  let history = useHistory();
   let 재고 = useContext(재고context);
 
   let item = props.item;
   let i = item.id;
 
   return (
-    <div>
+    <div
+      onClick={() => {
+        history.push(`/detail/${i}`);
+      }}
+    >
       <img
         src={`https://codingapple1.github.io/shop/shoes${i + 1}.jpg`}
         alt={i}

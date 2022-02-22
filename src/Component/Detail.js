@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import './Detail.scss';
 import {재고context} from './../App';
 import {CSSTransition} from 'react-transition-group';
+import {connect} from 'react-redux';
 
 // styled : CSS를 미리 입힌 컴포넌트
 let 박스 = styled.div`
@@ -22,12 +23,13 @@ function Detail(props) {
   let {id} = useParams(); // Router의 Param 훅. /:id에 사용자가 입력한 값이 변수에 저장
 
   let [shoes, setShoes] = useState(props.shoes);
-  const [showAlert, setShowAlert] = useState(true);
+  let [showAlert, setShowAlert] = useState(true);
   let [temp, setTemp] = useState('');
   let [tab, setTab] = useState(0);
   let [isSwitch, setIsSwitch] = useState(false);
+  let [count, setCount] = useState(1);
 
-  const sho = shoes.find((item) => item.id === parseInt(id));
+  let sho = shoes.find((item) => item.id === parseInt(id));
   // Ajax를 이용하여 데이터 추출 가능  ex) {id : 0}
 
   let 재고 = useContext(재고context);
@@ -78,12 +80,24 @@ function Detail(props) {
           <p>{sho.content}</p>
           <p>{sho.price}KRW</p>
           <Info 재고={재고} index={id}></Info>
+          <div>
+            수량 :<input type="text" value={count} />
+          </div>
           <button
             className="btn btn-danger"
             onClick={() => {
               const temp = [...props.재고];
               temp[id]--;
               props.set재고(temp);
+              props.dispatch({
+                type: '항목추가',
+                payload: {
+                  id: sho.id,
+                  name: sho.name,
+                  quan: count,
+                },
+              });
+              history.push('/cart');
             }}
           >
             주문하기
@@ -92,14 +106,13 @@ function Detail(props) {
             className="btn btn-danger"
             onClick={() => {
               history.goBack(); // 뒤로가기
-              // history.pust("/some/any"); // 특정경로로 이동
+              // history.push('/some/any'); // 특정경로로 이동
             }}
           >
             뒤로가기
           </button>
         </Col>
       </Row>
-
       <Nav className="mt-5" variant="tabs" defaultActiveKey="link-0">
         <Nav.Item>
           <Nav.Link
@@ -158,4 +171,8 @@ function Info(props) {
   return <p>재고 : {props.재고[props.index]}</p>;
 }
 
-export default Detail;
+function rdxFunc(store) {
+  return {arrData: store.reducer, isAlert: store.reducer2};
+}
+
+export default connect(rdxFunc)(Detail);
