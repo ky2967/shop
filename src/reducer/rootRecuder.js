@@ -1,39 +1,47 @@
 import React from 'react';
 import {combineReducers} from 'redux';
+import module1 from './modules/module1';
 
-let 기본state = [
+let initState = [
   {id: 0, name: 'nice shoes', quan: 2},
   {id: 1, name: 'agly shoes', quan: 7},
 ];
 
+const ITEM_INSERT = '항목추가';
+const QUAN_UP = '수량증가';
+const QUAN_DOWN = '수량감소';
+
 // redux에 등록된 state를 수정해주는 함수
-function reducer(state = 기본state, 액션) {
+function reducer(state = initState, action) {
   console.log('reducer');
   let temp = [...state];
+  //debugger;
 
-  if (액션.type === '항목추가') {
-    let index = state.findIndex((item) => item.name === 액션.payload.name);
+  switch (action.type) {
+    case ITEM_INSERT:
+      let index = state.findIndex((item) => item.name === action.payload.name);
 
-    if (index === -1) {
-      temp.push(액션.payload);
-    } else {
-      state[index].quan++;
-    }
-    return temp;
-  } else if (액션.type === '수량증가') {
-    temp[액션.payload.id].quan++;
-    return temp;
-  } else if (액션.type === '수량감소') {
-    temp[액션.payload.id].quan--;
-    if (temp[액션.payload.id].quan < 0) temp[액션.payload.id].quan = 0;
-    return temp;
+      if (index === -1) {
+        temp.push(action.payload);
+      } else {
+        state[index].quan += action.payload.quan;
+      }
+      return temp;
+    case QUAN_UP:
+      temp[action.payload.id].quan++;
+      return temp;
+    case QUAN_DOWN:
+      temp[action.payload.id].quan--;
+      if (temp[action.payload.id].quan < 0) temp[action.payload.id].quan = 0;
+      return temp;
+    default:
+      return state;
   }
-  return state;
 }
 
-function reducer2(state = true, 액션) {
+function reducer2(state = true, action) {
   console.log('reducer2');
-  if (액션.type === 'CloseAlert') return false;
+  if (action.type === 'CloseAlert') return false;
   return state;
 }
 

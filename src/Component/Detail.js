@@ -81,7 +81,15 @@ function Detail(props) {
           <p>{sho.price}KRW</p>
           <Info 재고={재고} index={id}></Info>
           <div>
-            수량 :<input type="text" value={count} />
+            수량 :
+            <input
+              type="text"
+              placeholder="수량을 입력하세요."
+              defaultValue={count}
+              onChange={(e) => {
+                setCount(parseInt(e.target.value));
+              }}
+            />
           </div>
           <button
             className="btn btn-danger"
@@ -93,7 +101,7 @@ function Detail(props) {
                 type: '항목추가',
                 payload: {
                   id: sho.id,
-                  name: sho.name,
+                  name: sho.title,
                   quan: count,
                 },
               });
@@ -164,7 +172,20 @@ function TabContent(props) {
     default:
       break;
   }
-  return component;
+  //return component;
+
+  // 오브젝트 자료형을 응용한 enum
+  return (
+    <div>
+      {
+        {
+          0: 'zero',
+          1: 'one',
+          2: 222,
+        }[props.index]
+      }
+    </div>
+  );
 }
 
 function Info(props) {

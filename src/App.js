@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, lazy, Suspense} from 'react';
 import {
   Navbar,
   Container,
@@ -12,9 +12,14 @@ import {
 import './App.css';
 import Data from './data/data';
 import {Link, Route, Switch, useHistory} from 'react-router-dom';
-import Detail from './Component/Detail';
 import Cart from './Component/Cart';
 import axios from 'axios';
+
+//import Detail from './Component/Detail';
+let Detail = lazy(() =>
+  // 컴포넌트가 실행 될때 import되도록 함.
+  import('./Component/Detail')
+);
 
 // 같은 변수값을 공유할 범위생성
 export let 재고context = React.createContext();
@@ -104,7 +109,11 @@ function App() {
 
         <Route path="/detail/:id">
           <재고context.Provider value={재고}>
-            <Detail shoes={shoes} 재고={재고} set재고={set재고} />
+            <Suspense fallback={<div>loading...</div>}>
+              {/* Suspense : 컴포넌트가 실행 될 때 import. 초기 App.js가 실행될 때 부하를 줄이기 위함 */}
+              {/* fallback : 컴포넌트를 만들기 위한 import가 되는 중에 나오는 메시지 */}
+              <Detail shoes={shoes} 재고={재고} set재고={set재고} />
+            </Suspense>
           </재고context.Provider>
         </Route>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import {Table} from 'react-bootstrap';
 import {connect, useSelector, useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import module1, {quanUp, quanDown} from '../reducer/modules/module1';
 
 function Cart(props) {
   // connect(rdxFunc)보다 간편하게 redux state를 가져올 수 있는 방법
